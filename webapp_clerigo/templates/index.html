@@ -60,13 +60,13 @@
                             <td>{{row.gender}}</td>
                             
                             <td>
-                                <a href="/update/{{row.0}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{row.0}}">Edit</a>
+                                <a href="{{ url_for('students.update', stud_id=row.stud_id) }}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{row.stud_id}}">Edit</a>
                                 <a href="{{ url_for('students.delete', stud_id=row.stud_id) }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure For Delete?')">Delete</a>
                             </td>
                         </tr>
 
                         <!-- Edit Modal for each row -->
-                        <div id="modaledit{{row.0}}" class="modal fade" role="dialog">
+                        <div id="modaledit{{row.stud_id}}" class="modal fade" role="dialog">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">

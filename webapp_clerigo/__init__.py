@@ -3,13 +3,10 @@ from flask_mysqldb import MySQL
 from webapp_clerigo.configure import SECRET_KEY, DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, CLOUD_NAME, API_KEY, API_SECRET
 from os import getenv
 import cloudinary
+
 mysql = MySQL()
 
 
-cloudinary.config(
-            cloud_name = CLOUD_NAME,
-            api_key = API_KEY,
-            api_secret = API_SECRET)
 
 def create_app():
     app = Flask(__name__)
@@ -19,6 +16,12 @@ def create_app():
     app.config['MYSQL_USER'] = DB_USER
     app.config['MYSQL_PASSWORD'] = DB_PASSWORD
     app.config['MYSQL_DB'] = DB_DATABASE
+
+    cloudinary.config(
+        CLOUD_NAME=CLOUD_NAME,
+        API_KEY=API_KEY,
+        API_SECRET=API_SECRET
+    )
 
     mysql.init_app(app)
     # import blueprints

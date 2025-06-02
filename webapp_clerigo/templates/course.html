@@ -73,14 +73,14 @@
                 <td>{{row.college}}</td>
 
                 <td>
-                    <a href="/update/{{row.0}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{row.0}}">Edit</a>
-                        <a href="/delete/course/{{row.0}}" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                    <a href="/update/{{row.course_code}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{row.course_code}}">Edit</a>
+                        <a href="/delete/course/{{row.course_code}}" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete?')">Delete</a>
 
                 </td>
 
             </tr>
 
-            <div id="modaledit{{row.0}}" class="modal fade" role="dialog">
+            <div id="modaledit{{row.course_code}}" class="modal fade" role="dialog">
 
 
 <div class="modal-dialog">
