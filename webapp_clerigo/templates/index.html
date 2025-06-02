@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+<link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+<link rel="shortcut icon" href="{{url_for('static', filename = 'univicon.png')}}">
+
+{% block content %}
+
+<div class="container">
+
+<div class="well text-center">
+    <p>
+
+        <h1>Welcome to Student Information System</h1>
+
+    </p>
+    
+</div>
+
+<div class="container">
+
+<div class="row">
+
+    <div class="col md-12">
+
+        <form action="{{ url_for('students.searchstudent') }}" method="post">
+        <input class="form-control mb-4" id="tableSearch" name="tableSearch" type="text" placeholder="Search Student...">
+        </form>
+        <h2>Student List</h2>
+            <p>
+
+            <button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#mymodal">
+                Add Student Data </button>
+
+            </p>
+{%with messages = get_flashed_messages()%}
+
+{%if messages%}
+
+{% for message in messages %}
+
+<div class="alert alert-secondary alert-dismissable" role="alert">
+
+ <button type="button" class="close" data-dismiss="alert" aria-label ="close">
+
+     <span aria-hidden="true">&times;</span>
+
+ </button>
+    {{message}}
+
+
+</div>
+
+{%endfor%}
+{%endif%}
+{%endwith%}
+
+       <div class="align-middle">
+        <table class="table table-hover table-striped table-bordered table-info"> 
+
+            <tr>
+                <th>Student ID</th>
+                <th>Photo</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Gender</th>
+                <th>Action</th>
+
+            </tr>
+
+                 {% for row in student_list %}
+            <tr>
+                <td>{{row.stud_id}}</td>
+                <td><img src="{{row.photo_link}}"></td>
+                <td>{{row.fname}}</td>
+                <td>{{row.lname}}</td>
+                <td>{{row.course_code}}</td>
+                <td>{{row.year_lvl}}</td>
+                <td>{{row.gender}}</td>
+                
+                <td>
+                    <a href="/update/{{row.0}}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{row.0}}">Edit</a>
+                    <a href="{{ url_for('students.delete', stud_id=row.stud_id) }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure For Delete?')">Delete</a>
+
+                </td>
+
+            </tr> 
+
+            <div id="modaledit{{row.0}}" class="modal fade" role="dialog">
+
+
+<div class="modal-dialog">
+
+
+    <div class="modal-content">
+
+
+        <div class="modal-header">
+          <h4 class="modal-title">Update Information</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+
+        </div>
+
+        <div class="modal-body">
+
+            <form action="{{ url_for('students.update') }}" method="POST"  enctype="multipart/form-data">
+
+               <div class="form-group">
+
+                    <label>Student ID:</label>
+                    <input readonly type="text" class="form-control" placeholder="e.g. 0000-0000"  required class="form-control" name="stud_id"  value="{{row.stud_id}} ">
+
+               </div> 
+
+               <div class="form-group" >
+                <label>Photo:</label>
+                <input class="form-control" type="file" name="file" id="formFile">  
+                </div>
+
+               <div class="form-group">
+
+
+                  <label>Firstname:</label>
+                  <input type="text" class="form-control" name="fname" value="{{row.fname}}">
+
+
+               </div>
+
+
+               <div class="form-group">
+
+
+                  <label>Lastname:</label>
+                  <input type="text" class="form-control" name="lname" value="{{row.lname}}">
+
+
+               </div>
+
+			   <div class="form-group">
+                <label>Course:</label> 
+                <div class="input-group mb-3" > 
+                    <select class="custom-select" name="course_code">
+                        {% for c in course %}
+                        <option value="{{c.course_code}}" 
+                            {% if c.course_code == row.course_code %}selected{% endif %}>
+                            {{c.course_code}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+              </div>
+
+			   <div class="form-group">
+
+
+                  <label>Year:</label>
+                  <input type="text" class="form-control" name="year_lvl" value="{{row.year_lvl}}">
+
+
+               </div>
+
+			   <div class="form-group">
+
+
+                  <label>Gender:</label>
+                  <input type="text" class="form-control" name="gender" value="{{row.gender}}">
+
+
+               </div>
+
+
+               <div class="form-group">
+
+
+                  <button class="btn btn-primary" type="submit">Update</button>
+
+
+               </div>
+
+
+            </form>
+
+
+         </div>
+
+
+         <div class="modal-footer">
+
+
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+
+         </div>
+
+
+      </div>
+
+
+   </div>
+
+
+</div>
+
+
+                {% endfor  %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+
+    <div id="mymodal" class="modal fade" role="dialog">
+   <div class="modal-dialog">
+
+       <div class="modal-content">
+
+           <div class="modal-header">
+            <h4 class="modal-title">Please Insert Data</h4>
+               <button type="button" class="close" data-dismiss="modal">&times</button>
+               
+           </div>
+
+           <div class="modal-body">
+
+               <form action="{{url_for('students.insert')}}" enctype="multipart/form-data" method="POST">
+
+                   <div class="form-group">
+
+                       <label>Student ID</label>
+                       <input type="text" class="form-control" name="stud_id" required="1">
+
+                   </div>
+
+                   <div class="form-group" >
+                    <label>Photo:</label>
+                    <input class="form-control" type="file" name="file" id="formFile">  
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>First name</label>
+                        <input type="text" class="form-control" name="fname" required="1">
+
+                    </div>
+
+                   <div class="form-group">
+
+                       <label>Last name</label>
+                       <input type="text" class="form-control" name="lname" required="1">
+
+                   </div>
+
+                   <div class="form-group">
+                    <label>Course:</label> 
+                    <div class="input-group mb-3" > 
+                      <select class="custom-select" id="course" name="course" type="text" required>
+                        <option selected="">Select a Course</option>
+                        {%for row in course%}
+                        <option value="{{row.course_code}}">{{row.course_code}}</option>
+                        {%endfor%}
+                      </select>
+                    </div>
+                  </div>
+
+                   <div class="form-group">
+
+                       <label>Year</label>
+                       <input type="text" class="form-control" name="year_lvl" required="1">
+
+                   </div>
+
+                   <div class="form-group">
+
+                       <label>Gender</label>
+                       <input type="text" class="form-control" name="gender" required="1">
+
+                   </div>
+
+                   <div class="form-group">
+
+                       <button class="btn btn-primary" type="submit">Insert Data</button>
+
+                   </div>
+
+               </form>
+
+           </div>
+
+           <div class="modal-footer">
+
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+           </div>
+
+       </div>
+
+
+   </div>
+
+
+
+    </div>
+
+
+
+</div>
+
+
+</div>
+</div>
+
+{% endblock %}
