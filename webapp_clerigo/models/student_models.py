@@ -3,10 +3,21 @@ from cloudinary.uploader import upload, destroy
 
 class Student:
     @staticmethod
-    def get_all():
+    def get_count():
         conn = DatabaseManager.get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM student_list")
+        cursor.execute("SELECT COUNT(*) as total FROM student_list")
+        result = cursor.fetchone()
+        total = result['total']
+        cursor.close()
+        conn.close()
+        return total
+
+    @staticmethod
+    def get_paginated(offset=0, per_page=10):
+        conn = DatabaseManager.get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM student_list LIMIT %s OFFSET %s", (per_page, offset))
         data = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -73,20 +84,34 @@ class Student:
         conn.close()
 
     @staticmethod
-    def search(keyword):
+    def search(keyword, offset=0, per_page=10):
         conn = DatabaseManager.get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM student_list")
-        students = cursor.fetchall()
+        
+        # SQL-based search
+        pattern = f'%{keyword}%'
+        query = """
+            SELECT SQL_CALC_FOUND_ROWS * 
+            FROM student_list 
+            WHERE 
+                UPPER(stud_id) LIKE UPPER(%s) OR
+                UPPER(fname) LIKE UPPER(%s) OR
+                UPPER(lname) LIKE UPPER(%s) OR
+                UPPER(course_code) LIKE UPPER(%s) OR
+                UPPER(year_lvl) LIKE UPPER(%s) OR
+                UPPER(gender) LIKE UPPER(%s)
+            LIMIT %s OFFSET %s
+        """
+        cursor.execute(query, (pattern, pattern, pattern, pattern, pattern, pattern, per_page, offset))
+        results = cursor.fetchall()
+        
+        # Get total count
+        cursor.execute("SELECT FOUND_ROWS() as total")
+        total = cursor.fetchone()['total']
+        
         cursor.close()
         conn.close()
-        
-        result = []
-        for student in students:    
-            student_allcaps = [str(info).upper() for info in student.values()]
-            if keyword in student_allcaps:
-                result.append(student)
-        return result
+        return results, total
 
     @staticmethod
     def upload_photo(file, stud_id):
