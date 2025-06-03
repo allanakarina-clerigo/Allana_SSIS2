@@ -1,6 +1,8 @@
 from flask import render_template, url_for, redirect, request, flash, Blueprint
 from ..models.student_models import Student
 from flask_paginate import Pagination, get_page_args
+import re
+from flask import current_app
 
 students_bp = Blueprint('students', __name__)
 
@@ -84,6 +86,11 @@ def Index():
 @students_bp.route('/insert', methods=['POST'])
 def insert():
     stud_id = request.form['stud_id'].strip()
+
+    if not re.match(r'^\d{4}-\d{4}$', stud_id):
+        flash('Student ID must be in format XXXX-XXXX', 'error')
+        return redirect(url_for('students.Index'))
+    
     file = request.files.get('file')
     fname = request.form['fname']
     lname = request.form['lname']
@@ -103,6 +110,9 @@ def insert():
     Student.create(stud_id, url, fname, lname, year_lvl, gender, course)
     flash("Data Inserted Successfully")
     return redirect(url_for('students.Index'))
+ 
+    
+    
 
 
 @students_bp.route('/delete/student/<string:stud_id>')

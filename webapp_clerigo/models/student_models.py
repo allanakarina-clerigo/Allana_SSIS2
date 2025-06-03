@@ -1,5 +1,6 @@
 from .database import DatabaseManager
 from cloudinary.uploader import upload, destroy
+import re
 
 class Student:
     @staticmethod
@@ -35,6 +36,9 @@ class Student:
 
     @staticmethod
     def create(stud_id, url, fname, lname, year_lvl, gender, course):
+        if not re.match(r'^\d{4}-\d{4}$', stud_id):
+            raise ValueError("Student ID must be in format XXXX-XXXX")
+            
         conn = DatabaseManager.get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
