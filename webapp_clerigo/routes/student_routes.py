@@ -92,16 +92,18 @@ def insert():
     gender = request.form['gender']
 
     try:
-        if file and file.filename.split('.')[-1].lower() in ALLOWED_EXTENSIONS:
+        if file and file.filename != '':
             url = Student.upload_photo(file, stud_id)
         else:
-            raise Exception("Invalid file type")
-    except:
-        url = 'https://res.cloudinary.com/dkc0twhfx/image/upload/v1644327143/ssis/default_loflin.jpg'
+            url = 'https://res.cloudinary.com/dkc0twhfx/image/upload/v1644327143/ssis/default_loflin.jpg'
+    except Exception as e:
+        flash(str(e), 'error')
+        return redirect(url_for('students.Index'))
     
     Student.create(stud_id, url, fname, lname, year_lvl, gender, course)
     flash("Data Inserted Successfully")
     return redirect(url_for('students.Index'))
+
 
 @students_bp.route('/delete/student/<string:stud_id>')
 def delete(stud_id):
@@ -113,6 +115,7 @@ def delete(stud_id):
 @students_bp.route('/update', methods=['POST'])
 def update():
     stud_id = request.form['stud_id'].strip()
+    file = request.files.get('file')
     fname = request.form['fname']
     lname = request.form['lname']
     course = request.form['course_code']
@@ -121,13 +124,14 @@ def update():
     file = request.files.get('file')
 
     try:
-        if file and file.filename.split('.')[-1].lower() in ALLOWED_EXTENSIONS:
+        if file and file.filename != '':
             url = Student.upload_photo(file, stud_id)
             Student.update_with_photo(url, fname, lname, year_lvl, gender, course, stud_id)
         else:
-            raise Exception("No valid file provided")
-    except:
-        Student.update_without_photo(fname, lname, year_lvl, gender, course, stud_id)
+            Student.update_without_photo(fname, lname, year_lvl, gender, course, stud_id)
+    except Exception as e:
+        flash(str(e), 'error')
+        return redirect(url_for('students.Index'))
     
     flash("Data updated successfully")
     return redirect(url_for('students.Index'))
@@ -162,3 +166,4 @@ def searchstudent():
     else:
         flash("No results found")
         return redirect(url_for('students.Index'))
+    

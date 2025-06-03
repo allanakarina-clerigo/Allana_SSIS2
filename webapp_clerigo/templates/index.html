@@ -246,4 +246,30 @@
     </div>
 </div>
 
+<script>
+    function validateFile(input) {
+        const maxSize = 2 * 1024 * 1024; // 2MB
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Check file type
+            if (!allowedTypes.includes(file.type)) {
+                alert('Only JPG and PNG images are allowed.');
+                input.value = '';
+                return;
+            }
+            
+            // Check file size
+            if (file.size > maxSize) {
+                alert('File size must be less than 2MB.');
+                input.value = '';
+            }
+        }
+    }
+</script>
+
+<!-- Modify file inputs in both modals -->
+
 {% endblock %}

@@ -120,3 +120,29 @@ class Student:
     @staticmethod
     def delete_photo(stud_id):
         destroy(public_id=f"ssis/{stud_id}")
+
+    @staticmethod
+    def upload_photo(file, stud_id):
+        MAX_SIZE = 2 * 1024 * 1024  # 2MB
+
+        # Check file size
+        file.seek(0, 2)  # Move to end of file
+        file_size = file.tell()
+        file.seek(0)  # Reset file pointer
+        
+        if file_size > MAX_SIZE:
+            raise ValueError("File size exceeds 2MB limit")
+        
+        # Check file signature
+        header = file.read(8)
+        file.seek(0)  # Reset for Cloudinary upload
+        
+        # PNG signature (first 8 bytes)
+        png_sig = b'\x89PNG\r\n\x1a\n'
+        # JPEG signature (first 2 bytes)
+        jpg_sig = b'\xFF\xD8'
+        
+        if not header.startswith(png_sig) and not (header[:2] == jpg_sig):
+            raise ValueError("Invalid file format. Only PNG and JPG are allowed")
+        
+        return upload(file.read(), public_id=f"ssis/{stud_id}")['url']
