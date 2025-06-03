@@ -106,11 +106,17 @@ def insert():
     except Exception as e:
         flash(str(e), 'error')
         return redirect(url_for('students.Index'))
+    #Student.create(stud_id, url, fname, lname, year_lvl, gender, course)
     
-    Student.create(stud_id, url, fname, lname, year_lvl, gender, course)
-    flash("Data Inserted Successfully")
+    #flash("Data Inserted Successfully")
+    #return redirect(url_for('students.Index'))
+    try:
+        Student.create(stud_id, url, fname, lname, year_lvl, gender, course)
+        flash("Data Inserted Successfully")
+    except:
+        flash("Student ID already exists. Please try another.", 'error')
+    
     return redirect(url_for('students.Index'))
- 
     
     
 

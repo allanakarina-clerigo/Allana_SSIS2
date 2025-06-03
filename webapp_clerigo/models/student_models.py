@@ -38,6 +38,8 @@ class Student:
     def create(stud_id, url, fname, lname, year_lvl, gender, course):
         if not re.match(r'^\d{4}-\d{4}$', stud_id):
             raise ValueError("Student ID must be in format XXXX-XXXX")
+        if Student.exists(stud_id):
+            raise ValueError(f'Student ID {stud_id} already exists!', 'danger')
             
         conn = DatabaseManager.get_db_connection()
         cursor = conn.cursor()
